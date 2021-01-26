@@ -1,5 +1,5 @@
 import socket
-from serverThread import ServerThread
+from serverThread import ServerThread, Aggregator
 
 listenPort = 5000
 sendPort = 5001
@@ -10,7 +10,9 @@ listenSocket.bind((host, listenPort))
 
 sendSocket = socket.socket()
 sendSocket.bind((host, sendPort))
-print('Listening on ', host, ':', listenPort, sep='')
+
+ag = Aggregator(host)
+ag.start()
 
 while True:
     try:
@@ -20,7 +22,7 @@ while True:
         sendConn, sendAddr = sendSocket.accept()
 
         print('client connected')
-        thread = ServerThread(sendConn, listenConn)
+        thread = ServerThread(sendConn, listenConn, addr)
         thread.start()
     except:
         print('Something wrong. Closing socket')
